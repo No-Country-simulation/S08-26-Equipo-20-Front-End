@@ -46,3 +46,12 @@ export interface UserCreateResult {
   user: SystemUser;
   temporary_password?: string | null;
 }
+
+export interface UserFormPayload {
+  name: string;
+  email: string;
+  role_id: number;
+  team_id: number | null;
+  password?: string;
+  is_active?: boolean;
+}

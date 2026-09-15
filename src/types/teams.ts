@@ -20,3 +20,8 @@ export interface TeamUpdatePayload {
   name?: string;
   description?: string | null;
 }
+
+export interface TeamFormPayload {
+  name: string;
+  description: string | null;
+}

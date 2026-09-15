@@ -18,3 +18,8 @@ export interface PriorityUpdatePayload {
   name?: string;
   level?: number;
 }
+
+export interface PriorityFormPayload {
+  name: string;
+  level: number;
+}

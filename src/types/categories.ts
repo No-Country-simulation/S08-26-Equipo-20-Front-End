@@ -21,3 +21,9 @@ export interface CategoryUpdatePayload {
   description?: string | null;
   requires_approval?: boolean;
 }
+
+export interface CategoryFormPayload {
+  name: string;
+  description: string | null;
+  requires_approval: boolean;
+}
