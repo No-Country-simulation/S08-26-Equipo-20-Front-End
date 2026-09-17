@@ -6,7 +6,7 @@ import type {
 } from "@/types/teams";
 import { apiRequest } from "./http";
 
-const TEAMS_PATH = "/teams?offset=0&limit=100";
+const TEAMS_PATH = "/teams/?offset=0&limit=100";
 
 export async function listTeams(): Promise<TeamList> {
   return apiRequest<TeamList>(TEAMS_PATH);
