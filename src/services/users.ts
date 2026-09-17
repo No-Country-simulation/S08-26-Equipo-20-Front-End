@@ -24,7 +24,7 @@ export async function listUsers(
   query.set("offset", String(params.offset ?? 0));
   query.set("limit", String(params.limit ?? 100));
   const qs = query.toString();
-  return apiRequest<UserList>(`/users${qs ? `?${qs}` : ""}`);
+  return apiRequest<UserList>(`/users/${qs ? `?${qs}` : ""}`);
 }
 
 export async function createUser(

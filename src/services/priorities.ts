@@ -6,7 +6,7 @@ import type {
 } from "@/types/priorities";
 import { apiRequest } from "./http";
 
-const PRIORITIES_PATH = "/priorities?offset=0&limit=100";
+const PRIORITIES_PATH = "/priorities/?offset=0&limit=100";
 
 export async function listPriorities(): Promise<PriorityList> {
   return apiRequest<PriorityList>(PRIORITIES_PATH);

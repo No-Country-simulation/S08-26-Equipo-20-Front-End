@@ -6,7 +6,7 @@ import type {
 } from "@/types/categories";
 import { apiRequest } from "./http";
 
-const CATEGORIES_PATH = "/categories?offset=0&limit=100";
+const CATEGORIES_PATH = "/categories/?offset=0&limit=100";
 
 export async function listCategories(): Promise<CategoryList> {
   return apiRequest<CategoryList>(CATEGORIES_PATH);
