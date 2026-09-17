@@ -40,9 +40,9 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
         listTeams(),
         listUsers({ role: "AGENT", is_active: true }), // Solo agentes activos
       ]);
-      setCategories(cats);
-      setPriorities(prios);
-      setTeams(tms);
+      setCategories(cats.items);
+      setPriorities(prios.items);
+      setTeams(tms.items);
       setAgents(ags.items);
     } catch (err) {
       console.error("Error loading options", err);
