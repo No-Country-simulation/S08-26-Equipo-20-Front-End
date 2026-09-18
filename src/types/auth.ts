@@ -1,4 +1,4 @@
-export type Role = "ADMIN" | "AGENT" | "USER";
+export type Role = "ADMIN" | "AGENT" | "USER" | "CUSTOMER";
 
 export interface LoginCredentials {
   email: string;
@@ -24,4 +24,5 @@ export const ROLE_AREA: Record<Role, string> = {
   ADMIN: "/admin",
   AGENT: "/agent",
   USER: "/user",
+  CUSTOMER: "/user",
 };
