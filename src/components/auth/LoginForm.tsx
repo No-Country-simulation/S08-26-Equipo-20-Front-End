@@ -19,12 +19,23 @@ export function LoginForm() {
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
-    if (loading || !user) {
-      return;
-    }
-    const area = user.must_change_password ? "/change-password" : ROLE_AREA[user.role];
-    router.replace(area);
-  }, [loading, user, router]);
+      if (loading || !user) {
+        return;
+      }
+
+      console.log("Usuario en sesión:", user);
+      console.log("Rol recibido:", user.role, "Tipo:", typeof user.role);
+      console.log("Claves ROLE_AREA:", ROLE_AREA);
+
+      const area = user.must_change_password ? "/change-password" : ROLE_AREA[user.role];
+      console.log("Ruta destino calculada:", area);
+
+      if (area) {
+        router.replace(area);
+      } else {
+        console.error("No se encontró área para el rol:", user.role);
+      }
+    }, [loading, user, router]);
 
   function redirectTo(area: string): void {
     router.replace(area);
