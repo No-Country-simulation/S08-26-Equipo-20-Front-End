@@ -18,7 +18,6 @@ import { CustomerRequestRead } from "@/types/request";
 import { RequestService } from "@/services/request.service";
 import { NewRequestModal } from "@/components/user/NewRequestModal";
 import { RequestList } from "@/components/user/RequestList";
-import { clearAccessToken } from "@/services/session";
 
 interface Stats {
   active: number;
@@ -26,7 +25,6 @@ interface Stats {
   resolved: number;
 }
 
-// Hook idiomático para evitar 'setMounted(true)' en useEffect y silenciar errores de hidratación
 const emptySubscribe = () => () => {};
 function useMounted() {
   return useSyncExternalStore(
@@ -38,7 +36,7 @@ function useMounted() {
 
 export default function UserPortalPage() {
   const router = useRouter();
-  const { user, loading: sessionLoading } = useSession();
+  const { user, loading: sessionLoading, logout } = useSession();
   const isMounted = useMounted();
   const [requests, setRequests] = useState<CustomerRequestRead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +44,14 @@ export default function UserPortalPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!sessionLoading && !user) {
+      router.replace("/login");
+    }
+  }, [sessionLoading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+
     let isSubscribed = true;
 
     RequestService.getMyRequests()
@@ -60,23 +66,28 @@ export default function UserPortalPage() {
     return () => {
       isSubscribed = false;
     };
-  }, []);
+  }, [user]);
 
-  const userObj = user as Record<string, unknown> | null;
-  const displayName =
-    (typeof userObj?.name === "string" && userObj.name) ||
-    (typeof userObj?.full_name === "string" && userObj.full_name) ||
-    (typeof userObj?.username === "string" && userObj.username) ||
-    (typeof userObj?.email === "string" ? userObj.email.split("@")[0] : "") ||
-    "Usuario";
+  if (sessionLoading || !user) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#0d0d0e] text-zinc-400">
+        <div className="flex items-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin text-white" />
+          <span className="text-xs font-mono">Verificando sesión...</span>
+        </div>
+      </div>
+    );
+  }
 
-  const initials =
-    displayName
-      .split(" ")
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join("") || "U";
+  const displayName = user?.name || user?.email?.split("@")[0] || "Usuario";
+
+    const initials =
+      displayName
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase())
+        .join("") || "U";
 
   const stats: Stats = {
     active: requests.filter((r) => ["NEW", "IN_PROGRESS"].includes(r.status)).length,
@@ -95,7 +106,7 @@ export default function UserPortalPage() {
   };
 
   const handleLogout = () => {
-    clearAccessToken();
+    logout();
     router.replace("/login");
   };
 
@@ -104,7 +115,7 @@ export default function UserPortalPage() {
       className="flex h-screen w-full overflow-hidden bg-[#0d0d0e] text-zinc-100 font-sans antialiased"
       suppressHydrationWarning
     >
-      {/* 1. Sidebar con altura fija (h-screen / h-full) para que SALIR nunca se desplace */}
+      {/* 1. Sidebar con altura fija (h-screen / h-full) */}
       <aside className="w-64 h-full border-r border-zinc-800/80 flex flex-col justify-between p-4 bg-[#0a0a0b] shrink-0 select-none">
         <div className="space-y-6">
           <div className="flex items-center gap-2.5 px-3 py-2">
@@ -130,7 +141,7 @@ export default function UserPortalPage() {
           </div>
         </div>
 
-        {/* Botón SALIR fijado al pie del sidebar */}
+        {/* Botón SALIR */}
         <div className="border-t border-zinc-800/80 pt-4 flex items-center justify-between px-3 text-xs text-zinc-500 shrink-0">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
@@ -146,7 +157,7 @@ export default function UserPortalPage() {
         </div>
       </aside>
 
-      {/* 2. Contenedor Principal: scrolleable de manera independiente */}
+      {/* 2. Contenedor Principal */}
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
         <header className="h-16 border-b border-zinc-800/80 flex items-center justify-between px-8 bg-[#0a0a0b] shrink-0 sticky top-0 z-10">
           <div className="flex items-center gap-4">
