@@ -4,8 +4,6 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/hooks/useSession";
 import {
-  Inbox,
-  PlusCircle,
   Search,
   Hourglass,
   CheckCircle2,
@@ -41,6 +39,7 @@ export default function UserPortalPage() {
   const [requests, setRequests] = useState<CustomerRequestRead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -70,7 +69,7 @@ export default function UserPortalPage() {
 
   if (sessionLoading || !user) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#0d0d0e] text-zinc-400">
+      <div className="flex h-screen w-full items-center justify-center bg-[#070708] text-zinc-400">
         <div className="flex items-center gap-2">
           <Loader2 className="w-5 h-5 animate-spin text-white" />
           <span className="text-xs font-mono">Verificando sesión...</span>
@@ -81,25 +80,34 @@ export default function UserPortalPage() {
 
   const displayName = user?.name || user?.email?.split("@")[0] || "Usuario";
 
-    const initials =
-      displayName
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0]?.toUpperCase())
-        .join("") || "U";
-
   const stats: Stats = {
     active: requests.filter((r) => ["NEW", "IN_PROGRESS"].includes(r.status)).length,
     inApproval: requests.filter((r) => r.status === "PENDING").length,
     resolved: requests.filter((r) => ["RESOLVED", "CLOSED"].includes(r.status)).length,
   };
 
-  const filteredRequests = requests.filter(
-    (r) =>
-      r.description.toLowerCase().includes(search.toLowerCase()) ||
-      `#REQ-${r.id}`.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRequests = requests.filter((r) => {
+    const query = search.trim().toLowerCase();
+
+    // 1. Filtro por texto / ID exacto
+    if (query) {
+      const cleanIdQuery = query.replace(/^(#req-|#req|#)/, "");
+      const isNumeric = /^\d+$/.test(cleanIdQuery);
+
+      const matchesSearch = isNumeric
+        ? r.id === Number(cleanIdQuery)
+        : r.description.toLowerCase().includes(query);
+
+      if (!matchesSearch) return false;
+    }
+
+    // 2. Filtro por estado
+    if (statusFilter === "ALL") return true;
+    if (statusFilter === "ACTIVE") return ["NEW", "IN_PROGRESS"].includes(r.status);
+    if (statusFilter === "PENDING") return r.status === "PENDING";
+    if (statusFilter === "RESOLVED") return ["RESOLVED", "CLOSED"].includes(r.status);
+    return true;
+  });
 
   const handleCreated = (newReq: CustomerRequestRead) => {
     setRequests((prev) => [newReq, ...prev]);
@@ -112,143 +120,141 @@ export default function UserPortalPage() {
 
   return (
     <div
-      className="flex h-screen w-full overflow-hidden bg-[#0d0d0e] text-zinc-100 font-sans antialiased"
+      className="min-h-screen w-full bg-[#080809] text-zinc-100 font-sans antialiased flex flex-col"
       suppressHydrationWarning
     >
-      {/* 1. Sidebar con altura fija (h-screen / h-full) */}
-      <aside className="w-64 h-full border-r border-zinc-800/80 flex flex-col justify-between p-4 bg-[#0a0a0b] shrink-0 select-none">
-        <div className="space-y-6">
-          <div className="flex items-center gap-2.5 px-3 py-2">
-            <div className="bg-white text-black p-1 rounded">
-              <div className="w-4 h-4 border-2 border-black rotate-45 flex items-center justify-center" />
-            </div>
-            <span className="font-semibold tracking-wider text-sm text-white">SERVICEFLOW</span>
+      {/* 1. Header principal */}
+      <header className="border-b border-zinc-900 bg-[#080809] px-8 pt-6 pb-0">
+        <div className="max-w-7xl mx-auto flex items-center justify-between pb-6">
+          <div>
+            <h1 className="text-sm font-bold tracking-widest text-white uppercase">
+              SERVICEFLOW
+            </h1>
+            <p className="text-xs text-zinc-500 mt-0.5">Portal de Solicitudes</p>
           </div>
 
-          <div className="space-y-1">
-            <p className="px-3 text-[10px] font-semibold text-zinc-500 tracking-wider">PORTAL</p>
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg bg-white text-black transition-colors">
-              <Inbox className="w-4 h-4" />
-              <span>Mis Solicitudes</span>
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Nuevo Ticket</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Botón SALIR */}
-        <div className="border-t border-zinc-800/80 pt-4 flex items-center justify-between px-3 text-xs text-zinc-500 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            <span className="font-mono text-[10px]">EN LÍNEA</span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 hover:text-zinc-300 font-medium tracking-wide text-[11px] transition-colors"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>SALIR</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* 2. Contenedor Principal */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
-        <header className="h-16 border-b border-zinc-800/80 flex items-center justify-between px-8 bg-[#0a0a0b] shrink-0 sticky top-0 z-10">
           <div className="flex items-center gap-4">
-            <span className="px-2.5 py-1 rounded border border-zinc-800 bg-zinc-950 font-mono text-[11px] text-zinc-400">
-              ROL: <span className="text-white font-medium">USUARIO</span>
-            </span>
-            <div className="relative w-80">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar en mis solicitudes..."
-                className="w-full bg-[#121214] border border-zinc-800/80 rounded-md pl-9 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-medium text-zinc-300">
+            <span className="text-sm text-zinc-300 font-medium">
               {!isMounted || sessionLoading ? "Cargando..." : displayName}
             </span>
-            <div className="w-8 h-8 rounded-md bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-mono font-medium text-white uppercase">
-              {!isMounted || sessionLoading ? "..." : initials}
-            </div>
-          </div>
-        </header>
-
-        <div className="p-8 max-w-7xl w-full mx-auto space-y-6 flex-1 flex flex-col">
-          <div className="flex items-center justify-between shrink-0">
-            <div>
-              <h1 className="text-xl font-semibold text-white tracking-tight">Mis Solicitudes</h1>
-              <p className="text-xs text-zinc-500 mt-1 font-mono">Seguimiento de tickets y requerimientos activos</p>
-            </div>
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-white text-black font-medium text-xs py-2 px-3.5 rounded-md hover:bg-zinc-200 transition-colors flex items-center gap-2"
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-transparent text-xs text-zinc-300 hover:text-white transition-colors"
             >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Nueva Solicitud</span>
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Cerrar Sesión</span>
             </button>
           </div>
+        </div>
 
-          {/* Tarjetas de Métricas */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
-            <div className="bg-[#121214] border border-zinc-800/80 rounded-lg p-5 flex justify-between items-start">
-              <div className="space-y-1">
-                <p className="text-[10px] font-mono tracking-wider text-zinc-400">SOLICITUDES ACTIVAS</p>
-                <p className="text-2xl font-bold font-mono text-white tracking-tight">
-                  {String(stats.active).padStart(2, "0")}
-                </p>
-              </div>
-              <Hourglass className="w-5 h-5 text-zinc-600 stroke-[1.5]" />
-            </div>
+        {/* Pestañas de navegación con borde inferior activo */}
+        <div className="max-w-7xl mx-auto flex gap-6 text-sm">
+          <button className="pb-3 border-b-2 border-white font-medium text-white transition-colors">
+            Solicitudes
+          </button>
+        </div>
+      </header>
 
-            <div className="bg-[#121214] border border-zinc-800/80 rounded-lg p-5 flex justify-between items-start">
-              <div className="space-y-1">
-                <p className="text-[10px] font-mono tracking-wider text-zinc-400">EN APROBACIÓN</p>
-                <p className="text-2xl font-bold font-mono text-white tracking-tight">
-                  {String(stats.inApproval).padStart(2, "0")}
-                </p>
-              </div>
-              <FileCheck2 className="w-5 h-5 text-zinc-600 stroke-[1.5]" />
-            </div>
+      {/* 2. Cuerpo Principal */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-8 space-y-6 flex flex-col">
+        {/* Fila superior: Título de sección y Botón primario de acción */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Solicitudes</h2>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-white hover:bg-zinc-200 text-black font-medium text-sm px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Crear Solicitud</span>
+          </button>
+        </div>
 
-            <div className="bg-[#121214] border border-zinc-800/80 rounded-lg p-5 flex justify-between items-start">
-              <div className="space-y-1">
-                <p className="text-[10px] font-mono tracking-wider text-zinc-400">RESUELTAS</p>
-                <p className="text-2xl font-bold font-mono text-white tracking-tight">
-                  {String(stats.resolved).padStart(2, "0")}
-                </p>
-              </div>
-              <CheckCircle2 className="w-5 h-5 text-zinc-600 stroke-[1.5]" />
+        {/* Tarjetas de Métricas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-[#0e0e10] border border-zinc-900 rounded-xl p-5 flex justify-between items-center">
+            <div className="space-y-1">
+              <p className="text-[11px] font-medium text-zinc-500 tracking-wider uppercase">Activas</p>
+              <p className="text-2xl font-bold text-white font-mono">
+                {String(stats.active).padStart(2, "0")}
+              </p>
             </div>
+            <Hourglass className="w-5 h-5 text-zinc-600" />
           </div>
 
-          {/* Lista delimitada con scroll propio */}
-          <div className="flex-1 min-h-0 bg-[#121214] border border-zinc-800/80 rounded-lg overflow-hidden flex flex-col">
-            {loading ? (
-              <div className="flex items-center justify-center p-12 text-zinc-500 gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-xs font-mono">Cargando solicitudes...</span>
-              </div>
-            ) : (
-              <RequestList
-                requests={filteredRequests}
-                selectedId={null}
-                onSelect={(id: number) => router.push(`/user/requests/${id}`)}
-              />
-            )}
+          <div className="bg-[#0e0e10] border border-zinc-900 rounded-xl p-5 flex justify-between items-center">
+            <div className="space-y-1">
+              <p className="text-[11px] font-medium text-zinc-500 tracking-wider uppercase">En Aprobación</p>
+              <p className="text-2xl font-bold text-white font-mono">
+                {String(stats.inApproval).padStart(2, "0")}
+              </p>
+            </div>
+            <FileCheck2 className="w-5 h-5 text-zinc-600" />
           </div>
+
+          <div className="bg-[#0e0e10] border border-zinc-900 rounded-xl p-5 flex justify-between items-center">
+            <div className="space-y-1">
+              <p className="text-[11px] font-medium text-zinc-500 tracking-wider uppercase">Resueltas</p>
+              <p className="text-2xl font-bold text-white font-mono">
+                {String(stats.resolved).padStart(2, "0")}
+              </p>
+            </div>
+            <CheckCircle2 className="w-5 h-5 text-zinc-600" />
+          </div>
+        </div>
+
+        {/* Barra de filtros */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por número o descripción..."
+              className="w-full bg-[#0a0a0c] border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors"
+            />
+          </div>
+
+          <button
+            type="button"
+            className="p-2.5 rounded-lg border border-zinc-800 bg-[#0a0a0c] text-zinc-400 hover:text-white transition-colors flex items-center justify-center"
+            aria-label="Buscar"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+
+          <div className="relative">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="appearance-none bg-[#0a0a0c] border border-zinc-800 text-zinc-300 text-sm rounded-lg pl-4 pr-10 py-2 focus:outline-none focus:border-zinc-600 transition-colors cursor-pointer"
+            >
+              <option value="ALL">Todos los estados</option>
+              <option value="ACTIVE">Activas</option>
+              <option value="PENDING">En aprobación</option>
+              <option value="RESOLVED">Resueltas</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-zinc-500">
+              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Contenedor de la lista delimitada tipo tabla */}
+        <div className="flex-1 bg-[#0b0b0d] border border-zinc-900 rounded-xl overflow-hidden flex flex-col">
+          {loading ? (
+            <div className="flex items-center justify-center p-16 text-zinc-500 gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-xs font-mono">Cargando solicitudes...</span>
+            </div>
+          ) : (
+            <RequestList
+              requests={filteredRequests}
+              selectedId={null}
+              onSelect={(id: number) => router.push(`/user/requests/${id}`)}
+            />
+          )}
         </div>
       </main>
 
