@@ -8,8 +8,10 @@ import {
   listTeams,
   updateTeam,
 } from "@/services/teams";
+import { listUsers, updateUser } from "@/services/users";
 import { ApiError } from "@/services/http";
 import type { Team } from "@/types/teams";
+import type { SystemUser } from "@/types/users";
 
 vi.mock("@/services/teams", () => ({
   listTeams: vi.fn(),
@@ -18,11 +20,33 @@ vi.mock("@/services/teams", () => ({
   deleteTeam: vi.fn(),
 }));
 
+vi.mock("@/services/users", () => ({
+  listUsers: vi.fn(),
+  updateUser: vi.fn(),
+}));
+
 function makeTeam(overrides: Partial<Team> = {}): Team {
   return {
     id: 1,
     name: "Soporte",
     description: "Equipo de soporte",
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+function makeUser(overrides: Partial<SystemUser> = {}): SystemUser {
+  return {
+    id: 10,
+    name: "Ana Gomez",
+    email: "ana.gomez@empresa.com",
+    role: "AGENT",
+    team: "Soporte",
+    role_id: 2,
+    team_id: 1,
+    must_change_password: false,
+    is_active: true,
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-01-01T00:00:00Z",
     ...overrides,
@@ -39,6 +63,27 @@ describe("TeamsSection", () => {
       items: [makeTeam()],
       total: 1,
     });
+    vi.mocked(listUsers).mockResolvedValue({
+      items: [
+        makeUser(),
+        makeUser({
+          id: 11,
+          name: "Luis Perez",
+          email: "luis.perez@empresa.com",
+          team: null,
+          team_id: null,
+        }),
+        makeUser({
+          id: 12,
+          name: "Sofia Diaz",
+          email: "sofia.diaz@empresa.com",
+          team: "Mesa de ayuda",
+          team_id: 2,
+        }),
+      ],
+      total: 3,
+    });
+    vi.mocked(updateUser).mockResolvedValue(makeUser());
   });
 
   afterEach(() => {
@@ -143,6 +188,77 @@ describe("TeamsSection", () => {
         description: "Soporte de segundo nivel",
       }),
     );
+  });
+
+  it("muestra los miembros actuales y agrega un usuario al equipo", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updateTeam).mockResolvedValue(makeTeam());
+    renderTeamsSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar equipo Soporte" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Editar Equipo" });
+    expect(within(dialog).getByText("Ana Gomez")).toBeInTheDocument();
+
+    await user.click(within(dialog).getByText("Luis Perez"));
+    await user.click(within(dialog).getByRole("button", { name: "Guardar Cambios" }));
+
+    await waitFor(() =>
+      expect(updateUser).toHaveBeenCalledWith(11, { team_id: 1 }),
+    );
+  });
+
+  it("quita un miembro del equipo", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updateTeam).mockResolvedValue(makeTeam());
+    renderTeamsSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar equipo Soporte" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Editar Equipo" });
+    await user.click(
+      within(dialog).getByRole("button", { name: "Quitar Ana Gomez del equipo" }),
+    );
+    await user.click(within(dialog).getByRole("button", { name: "Guardar Cambios" }));
+
+    await waitFor(() =>
+      expect(updateUser).toHaveBeenCalledWith(10, { team_id: null }),
+    );
+  });
+
+  it("filtra los candidatos por nombre o email", async () => {
+    const user = userEvent.setup();
+    renderTeamsSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar equipo Soporte" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Editar Equipo" });
+    await user.type(
+      within(dialog).getByLabelText("Buscar usuario para agregar al equipo"),
+      "sofia",
+    );
+
+    const candidates = within(dialog).getByTestId("team-candidates");
+    expect(within(candidates).getByText("Sofia Diaz")).toBeInTheDocument();
+    expect(within(candidates).queryByText("Luis Perez")).not.toBeInTheDocument();
+  });
+
+  it("no actualiza los miembros si no cambiaron", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updateTeam).mockResolvedValue(makeTeam());
+    renderTeamsSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar equipo Soporte" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Editar Equipo" });
+    await user.click(within(dialog).getByRole("button", { name: "Guardar Cambios" }));
+
+    await waitFor(() => expect(updateTeam).toHaveBeenCalled());
+    expect(updateUser).not.toHaveBeenCalled();
   });
 
   it("elimina un equipo tras confirmar", async () => {
