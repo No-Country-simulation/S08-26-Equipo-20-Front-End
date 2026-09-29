@@ -3,27 +3,35 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { requestsService } from "@/services/requests";
+import { listPriorities } from "@/services/priorities";
 import type { RequestListOut } from "@/types/requests";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatusBadge } from "@/components/user/StatusBadge";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import { errorMessage } from "@/utils/error";
 
 export function RequestList() {
   const [requests, setRequests] = useState<RequestListOut[]>([]);
+  const [priorities, setPriorities] = useState<{ id: number; name: string }[]>([]);
+  const [selectedPriority, setSelectedPriority] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadRequests();
+    loadData();
   }, []);
 
-  const loadRequests = async () => {
+  const loadData = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await requestsService.list();
-      setRequests(data);
+      const [reqData, prioData] = await Promise.all([
+        requestsService.list(),
+        listPriorities()
+      ]);
+      setRequests(reqData);
+      setPriorities(Array.isArray(prioData) ? prioData : prioData.items);
     } catch (err) {
       setError(errorMessage(err, "Error al cargar solicitudes"));
     } finally {
@@ -47,58 +55,92 @@ export function RequestList() {
     return <EmptyState message="No hay solicitudes para mostrar" />;
   }
 
+  const filteredRequests = selectedPriority
+    ? requests.filter((r) => r.priority?.id === parseInt(selectedPriority))
+    : requests;
+
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl">
-      <table className="w-full text-left text-sm text-zinc-200">
-        <thead className="border-b border-zinc-800 bg-zinc-900/50 text-xs text-gray-400">
-          <tr>
-            <th className="px-6 py-4 font-medium">ID</th>
-            <th className="px-6 py-4 font-medium">Descripción</th>
-            <th className="px-6 py-4 font-medium">Estado</th>
-            <th className="px-6 py-4 font-medium">Prioridad</th>
-            <th className="px-6 py-4 font-medium">Categoría</th>
-            <th className="px-6 py-4 font-medium">Asignado</th>
-            <th className="px-6 py-4 font-medium text-right">Fecha</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-zinc-800">
-          {requests.map((request) => (
-            <tr
-              key={request.id}
-              className="group transition-colors hover:bg-zinc-800/50"
-            >
-              <td className="px-6 py-4">
-                <Link
-                  href={`/agent/requests/${request.id}`}
-                  className="font-mono text-blue-400 hover:underline"
-                >
-                  #{request.id}
-                </Link>
-              </td>
-              <td className="px-6 py-4">
-                <p className="line-clamp-1 max-w-[200px]" title={request.description}>
-                  {request.description}
-                </p>
-              </td>
-              <td className="px-6 py-4">
-                <StatusBadge status={request.status as any} />
-              </td>
-              <td className="px-6 py-4">
-                {request.priority?.name || <span className="text-zinc-600">-</span>}
-              </td>
-              <td className="px-6 py-4">
-                {request.category?.name || <span className="text-zinc-600">-</span>}
-              </td>
-              <td className="px-6 py-4">
-                {request.assignee?.name || <span className="text-zinc-600">Sin asignar</span>}
-              </td>
-              <td className="px-6 py-4 text-right text-xs text-zinc-500">
-                {new Date(request.created_at).toLocaleDateString()}
-              </td>
+    <>
+      <SectionHeader
+        title="Gestión de Solicitudes"
+        description="Visualiza, categoriza y resuelve las solicitudes de los usuarios"
+      >
+        <div className="flex items-center gap-2">
+          <label htmlFor="priority-filter" className="text-sm text-zinc-400">Filtrar:</label>
+          <select
+            id="priority-filter"
+            value={selectedPriority}
+            onChange={(e) => setSelectedPriority(e.target.value)}
+            className="rounded-md bg-zinc-950 border border-zinc-800 px-3 py-1.5 text-sm text-white focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors"
+          >
+            <option value="">Todas las prioridades</option>
+            {priorities.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      </SectionHeader>
+
+      <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 shadow-xl">
+        <table className="w-full text-left text-sm text-zinc-200">
+          <thead className="border-b border-zinc-800 bg-zinc-900/50 text-xs text-gray-400">
+            <tr>
+              <th className="px-6 py-4 font-medium">ID</th>
+              <th className="px-6 py-4 font-medium">Descripción</th>
+              <th className="px-6 py-4 font-medium">Estado</th>
+              <th className="px-6 py-4 font-medium">Prioridad</th>
+              <th className="px-6 py-4 font-medium">Categoría</th>
+              <th className="px-6 py-4 font-medium">Asignado</th>
+              <th className="px-6 py-4 font-medium text-right">Fecha</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-zinc-800">
+            {filteredRequests.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-8 text-center text-zinc-500">
+                  No se encontraron solicitudes con esa prioridad.
+                </td>
+              </tr>
+            ) : (
+              filteredRequests.map((request) => (
+                <tr
+                  key={request.id}
+                  className="group transition-colors hover:bg-zinc-800/50"
+                >
+                  <td className="px-6 py-4">
+                    <Link
+                      href={`/agent/requests/${request.id}`}
+                      className="font-mono text-blue-400 hover:underline"
+                    >
+                      #{request.id}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4">
+                    <p className="line-clamp-1 max-w-[200px]" title={request.description}>
+                      {request.description}
+                    </p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <StatusBadge status={request.status as any} />
+                  </td>
+                  <td className="px-6 py-4">
+                    {request.priority?.name || <span className="text-zinc-600">-</span>}
+                  </td>
+                  <td className="px-6 py-4">
+                    {request.category?.name || <span className="text-zinc-600">-</span>}
+                  </td>
+                  <td className="px-6 py-4">
+                    {request.assignee?.name || <span className="text-zinc-600">Sin asignar</span>}
+                  </td>
+                  <td className="px-6 py-4 text-right text-xs text-zinc-500">
+                    {new Date(request.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
