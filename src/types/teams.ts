@@ -24,4 +24,5 @@ export interface TeamUpdatePayload {
 export interface TeamFormPayload {
   name: string;
   description: string | null;
+  member_ids: number[];
 }

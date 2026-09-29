@@ -185,7 +185,11 @@ export function CategoriesSection() {
     }
     setIsPending(true);
     try {
-      await updateCategory(editing.id, payload);
+      await updateCategory(editing.id, {
+        ...(payload.name !== editing.name ? { name: payload.name } : {}),
+        description: payload.description,
+        requires_approval: payload.requires_approval,
+      });
       setEditing(null);
       await reload();
     } catch (cause) {

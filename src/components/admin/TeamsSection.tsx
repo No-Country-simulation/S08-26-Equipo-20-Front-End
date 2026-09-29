@@ -1,7 +1,7 @@
 "use client";
 
-import { Loader2, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { Loader2, Pencil, Search, Trash2, X } from "lucide-react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LoadingState } from "@/components/ui/LoadingState";
@@ -13,7 +13,9 @@ import {
   listTeams,
   updateTeam,
 } from "@/services/teams";
+import { listUsers, updateUser } from "@/services/users";
 import type { Team, TeamFormPayload } from "@/types/teams";
+import type { SystemUser } from "@/types/users";
 import { errorMessage } from "@/utils/error";
 
 const INPUT_CLASS =
@@ -23,15 +25,51 @@ const LABEL_CLASS = "mb-1.5 block text-xs text-gray-400";
 
 interface TeamFormProps {
   initial?: Team;
+  users: SystemUser[];
   isPending: boolean;
   onSubmit: (payload: TeamFormPayload) => Promise<void>;
   onClose: () => void;
 }
 
-function TeamForm({ initial, isPending, onSubmit, onClose }: TeamFormProps) {
+function TeamForm({
+  initial,
+  users,
+  isPending,
+  onSubmit,
+  onClose,
+}: TeamFormProps) {
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberIds, setMemberIds] = useState<number[]>(() =>
+    users.filter((user) => user.team_id === initial?.id).map((user) => user.id),
+  );
   const [error, setError] = useState<string | null>(null);
+
+  const search = memberSearch.trim().toLowerCase();
+  const candidates = useMemo(
+    () =>
+      users.filter(
+        (user) =>
+          !memberIds.includes(user.id) &&
+          (search === "" ||
+            user.name.toLowerCase().includes(search) ||
+            user.email.toLowerCase().includes(search)),
+      ),
+    [users, memberIds, search],
+  );
+  const members = useMemo(
+    () => users.filter((user) => memberIds.includes(user.id)),
+    [users, memberIds],
+  );
+
+  function toggleMember(userId: number) {
+    setMemberIds((current) =>
+      current.includes(userId)
+        ? current.filter((id) => id !== userId)
+        : [...current, userId],
+    );
+  }
 
   function validate(): string | null {
     if (!name.trim()) {
@@ -54,6 +92,7 @@ function TeamForm({ initial, isPending, onSubmit, onClose }: TeamFormProps) {
     await onSubmit({
       name: name.trim(),
       description: description.trim() || null,
+      member_ids: memberIds,
     });
   }
 
@@ -91,6 +130,64 @@ function TeamForm({ initial, isPending, onSubmit, onClose }: TeamFormProps) {
             placeholder="Descripción del equipo"
           />
         </div>
+        {initial && (
+          <div>
+            <span className={LABEL_CLASS}>Miembros</span>
+            {members.length > 0 && (
+              <ul className="mb-2 space-y-1 rounded-md border border-zinc-800 bg-zinc-950 p-2">
+                {members.map((user) => (
+                  <li
+                    key={user.id}
+                    className="flex items-center justify-between text-sm text-zinc-200"
+                  >
+                    <span>{user.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => toggleMember(user.id)}
+                      aria-label={`Quitar ${user.name} del equipo`}
+                      className="text-zinc-500 transition-colors hover:text-red-400"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
+              <input
+                type="search"
+                value={memberSearch}
+                onChange={(event) => setMemberSearch(event.target.value)}
+                aria-label="Buscar usuario para agregar al equipo"
+                placeholder="Buscar usuario por nombre o email"
+                className={`${INPUT_CLASS} pl-9`}
+              />
+            </div>
+            {candidates.length > 0 ? (
+              <ul
+                data-testid="team-candidates"
+                className="mt-2 max-h-32 space-y-1 overflow-y-auto rounded-md border border-zinc-800 bg-zinc-950 p-2"
+              >
+                {candidates.map((user) => (
+                  <li key={user.id}>
+                    <button
+                      type="button"
+                      onClick={() => toggleMember(user.id)}
+                      className="w-full rounded px-1 py-0.5 text-left text-sm text-zinc-300 transition-colors hover:text-white"
+                    >
+                      {user.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-xs text-zinc-500">
+                No hay usuarios disponibles
+              </p>
+            )}
+          </div>
+        )}
         <button
           type="submit"
           disabled={isPending}
@@ -106,6 +203,7 @@ function TeamForm({ initial, isPending, onSubmit, onClose }: TeamFormProps) {
 
 export function TeamsSection() {
   const [teams, setTeams] = useState<Team[]>([]);
+  const [users, setUsers] = useState<SystemUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -115,10 +213,11 @@ export function TeamsSection() {
 
   useEffect(() => {
     let cancelled = false;
-    listTeams()
-      .then((result) => {
+    Promise.all([listTeams(), listUsers()])
+      .then(([teamList, userList]) => {
         if (cancelled) return;
-        setTeams(result.items);
+        setTeams(teamList.items);
+        setUsers(userList.items);
         setError(null);
       })
       .catch((cause: unknown) => {
@@ -139,8 +238,9 @@ export function TeamsSection() {
   async function reload() {
     setLoading(true);
     try {
-      const result = await listTeams();
-      setTeams(result.items);
+      const [teamList, userList] = await Promise.all([listTeams(), listUsers()]);
+      setTeams(teamList.items);
+      setUsers(userList.items);
       setError(null);
     } catch (cause) {
       setError(errorMessage(cause, "No se pudo cargar la información"));
@@ -152,7 +252,10 @@ export function TeamsSection() {
   async function handleCreate(payload: TeamFormPayload) {
     setIsPending(true);
     try {
-      await createTeam(payload);
+      await createTeam({
+        name: payload.name,
+        description: payload.description,
+      });
       setCreateOpen(false);
       await reload();
     } catch (cause) {
@@ -168,7 +271,23 @@ export function TeamsSection() {
     }
     setIsPending(true);
     try {
-      await updateTeam(editing.id, payload);
+      await updateTeam(editing.id, {
+        ...(payload.name !== editing.name ? { name: payload.name } : {}),
+        description: payload.description,
+      });
+      const previousMemberIds = users
+        .filter((user) => user.team_id === editing.id)
+        .map((user) => user.id);
+      for (const userId of previousMemberIds) {
+        if (!payload.member_ids.includes(userId)) {
+          await updateUser(userId, { team_id: null });
+        }
+      }
+      for (const userId of payload.member_ids) {
+        if (!previousMemberIds.includes(userId)) {
+          await updateUser(userId, { team_id: editing.id });
+        }
+      }
       setEditing(null);
       await reload();
     } catch (cause) {
@@ -264,6 +383,7 @@ export function TeamsSection() {
       </div>
       {createOpen && (
         <TeamForm
+          users={users}
           isPending={isPending}
           onSubmit={handleCreate}
           onClose={() => setCreateOpen(false)}
@@ -271,7 +391,9 @@ export function TeamsSection() {
       )}
       {editing && (
         <TeamForm
+          key={editing.id}
           initial={editing}
+          users={users}
           isPending={isPending}
           onSubmit={handleUpdate}
           onClose={() => setEditing(null)}
