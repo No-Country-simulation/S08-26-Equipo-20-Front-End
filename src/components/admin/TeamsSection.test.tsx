@@ -122,6 +122,29 @@ describe("TeamsSection", () => {
     );
   });
 
+  it("no reenvía el nombre cuando solo se edita la descripción", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updateTeam).mockResolvedValue(makeTeam());
+    renderTeamsSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar equipo Soporte" }),
+    );
+    const dialog = await screen.findByRole("dialog", { name: "Editar Equipo" });
+    await user.clear(within(dialog).getByLabelText("Descripción"));
+    await user.type(
+      within(dialog).getByLabelText("Descripción"),
+      "Soporte de segundo nivel",
+    );
+    await user.click(within(dialog).getByRole("button", { name: "Guardar Cambios" }));
+
+    await waitFor(() =>
+      expect(updateTeam).toHaveBeenCalledWith(1, {
+        description: "Soporte de segundo nivel",
+      }),
+    );
+  });
+
   it("elimina un equipo tras confirmar", async () => {
     const user = userEvent.setup();
     renderTeamsSection();

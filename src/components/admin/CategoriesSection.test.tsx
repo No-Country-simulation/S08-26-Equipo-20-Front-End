@@ -132,6 +132,32 @@ describe("CategoriesSection", () => {
     );
   });
 
+  it("no reenvía el nombre cuando solo se edita la descripción", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updateCategory).mockResolvedValue(makeCategory());
+    renderCategoriesSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar categoría Hardware" }),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Editar Categoría",
+    });
+    await user.clear(within(dialog).getByLabelText("Descripción"));
+    await user.type(
+      within(dialog).getByLabelText("Descripción"),
+      "Problemas de hardware y red",
+    );
+    await user.click(within(dialog).getByRole("button", { name: "Guardar Cambios" }));
+
+    await waitFor(() =>
+      expect(updateCategory).toHaveBeenCalledWith(1, {
+        description: "Problemas de hardware y red",
+        requires_approval: false,
+      }),
+    );
+  });
+
   it("elimina una categoría tras confirmar", async () => {
     const user = userEvent.setup();
     renderCategoriesSection();

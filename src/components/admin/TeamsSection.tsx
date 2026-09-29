@@ -168,7 +168,10 @@ export function TeamsSection() {
     }
     setIsPending(true);
     try {
-      await updateTeam(editing.id, payload);
+      await updateTeam(editing.id, {
+        ...(payload.name !== editing.name ? { name: payload.name } : {}),
+        description: payload.description,
+      });
       setEditing(null);
       await reload();
     } catch (cause) {
