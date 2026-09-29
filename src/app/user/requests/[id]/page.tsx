@@ -11,6 +11,9 @@ import {
   Clock,
   X,
   ExternalLink,
+  AlertCircle,
+  Users,
+  UserCheck,
 } from "lucide-react";
 import { CustomerRequestDetail } from "@/types/request";
 import { RequestService } from "@/services/request.service";
@@ -159,11 +162,11 @@ export default function RequestDetailPage({
           </div>
 
           {/* Tarjeta de Detalle Principal */}
-                    <div className="bg-[#0b0b0d] border border-zinc-900 rounded-2xl p-6 space-y-5 overflow-hidden">
-                      <div className="space-y-2 min-w-0">
-                        <h1 className="text-xl font-bold text-white tracking-tight leading-snug wrap-anywhere">
-                          {detail.description}
-                        </h1>
+          <div className="bg-[#0b0b0d] border border-zinc-900 rounded-2xl p-6 space-y-5 overflow-hidden">
+            <div className="space-y-2 min-w-0">
+              <h1 className="text-xl font-bold text-white tracking-tight leading-snug wrap-anywhere">
+                {detail.description}
+              </h1>
               <div className="flex items-center gap-5 text-xs font-mono text-zinc-500 pt-1">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-zinc-400" />
@@ -175,6 +178,39 @@ export default function RequestDetailPage({
                     Actualizado: {formatDate(detail.updated_at)}
                   </span>
                 )}
+              </div>
+            </div>
+
+            {/* Metadatos: Prioridad, Equipo y Responsable */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800/70">
+              <div className="flex items-center gap-2.5 bg-[#0e0e11] border border-zinc-800/80 px-3.5 py-2.5 rounded-xl">
+                <AlertCircle className="w-4 h-4 text-zinc-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-mono uppercase text-zinc-500">Prioridad</p>
+                  <p className="text-xs font-medium text-zinc-200 truncate">
+                    {detail.priority?.name ?? "Sin asignar"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 bg-[#0e0e11] border border-zinc-800/80 px-3.5 py-2.5 rounded-xl">
+                <Users className="w-4 h-4 text-zinc-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-mono uppercase text-zinc-500">Equipo</p>
+                  <p className="text-xs font-medium text-zinc-200 truncate">
+                    {detail.team?.name ?? "Sin asignar"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 bg-[#0e0e11] border border-zinc-800/80 px-3.5 py-2.5 rounded-xl">
+                <UserCheck className="w-4 h-4 text-zinc-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-mono uppercase text-zinc-500">Responsable</p>
+                  <p className="text-xs font-medium text-zinc-200 truncate">
+                    {detail.assignee?.name ?? "No asignado"}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -291,40 +327,40 @@ export default function RequestDetailPage({
       </div>
 
       {/* Modal / Lightbox de Previsualización */}
-            {previewImage && (
-              <div
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-in fade-in duration-150"
-                onClick={() => setPreviewImage(null)}
-              >
-                <div
-                  className="relative max-w-4xl max-h-[90vh] flex flex-col items-center"
-                  onClick={(e) => e.stopPropagation()}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4 animate-in fade-in duration-150"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-4xl max-h-[90vh] flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Barra superior de controles */}
+            <div className="w-full flex items-center justify-between pb-3 text-zinc-400">
+              <span className="text-xs font-mono truncate max-w-xs">{previewImage.name}</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPreviewImage(null)}
+                  className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+                  title="Cerrar visor"
                 >
-                  {/* Barra superior de controles */}
-                  <div className="w-full flex items-center justify-between pb-3 text-zinc-400">
-                    <span className="text-xs font-mono truncate max-w-xs">{previewImage.name}</span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setPreviewImage(null)}
-                        className="p-1.5 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                        title="Cerrar visor"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Imagen renderizada */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={previewImage.url}
-                    alt={previewImage.name}
-                    className="max-h-[80vh] w-auto object-contain rounded-xl border border-zinc-800/80 shadow-2xl"
-                  />
-                </div>
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-            )}
-          </>
-        );
-      }
+            </div>
+
+            {/* Imagen renderizada */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewImage.url}
+              alt={previewImage.name}
+              className="max-h-[80vh] w-auto object-contain rounded-xl border border-zinc-800/80 shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
