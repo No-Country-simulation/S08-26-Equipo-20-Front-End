@@ -15,16 +15,51 @@ export function RequestHistory({ requestId }: RequestHistoryProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Diccionarios para mapear IDs a nombres
+  const [categoriesMap, setCategoriesMap] = useState<Record<string, string>>({});
+  const [prioritiesMap, setPrioritiesMap] = useState<Record<string, string>>({});
+  const [teamsMap, setTeamsMap] = useState<Record<string, string>>({});
+  const [agentsMap, setAgentsMap] = useState<Record<string, string>>({});
+
   useEffect(() => {
-    loadHistory();
+    loadData();
   }, [requestId]);
 
-  const loadHistory = async () => {
+  const loadData = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await requestsService.listHistory(requestId);
-      setHistory(data);
+      
+      // Cargar historial y catálogos en paralelo
+      const [histData, cats, prios, tms, ags] = await Promise.all([
+        requestsService.listHistory(requestId),
+        import("@/services/categories").then(m => m.listCategories()),
+        import("@/services/priorities").then(m => m.listPriorities()),
+        import("@/services/teams").then(m => m.listTeams()),
+        import("@/services/users").then(m => m.listUsers({ role: "AGENT", limit: 1000 })),
+      ]);
+
+      setHistory(histData);
+
+      // Crear diccionarios
+      const safeArray = (data: any) => Array.isArray(data) ? data : data?.items || [];
+      
+      const cMap: Record<string, string> = {};
+      safeArray(cats).forEach((c: any) => cMap[c.id.toString()] = c.name);
+      setCategoriesMap(cMap);
+
+      const pMap: Record<string, string> = {};
+      safeArray(prios).forEach((p: any) => pMap[p.id.toString()] = p.name);
+      setPrioritiesMap(pMap);
+
+      const tMap: Record<string, string> = {};
+      safeArray(tms).forEach((t: any) => tMap[t.id.toString()] = t.name);
+      setTeamsMap(tMap);
+
+      const aMap: Record<string, string> = {};
+      safeArray(ags).forEach((a: any) => aMap[a.id.toString()] = a.name);
+      setAgentsMap(aMap);
+
     } catch (err) {
       setError(errorMessage(err, "Error al cargar historial"));
     } finally {
@@ -43,7 +78,27 @@ export function RequestHistory({ requestId }: RequestHistoryProps) {
     };
 
     const fieldName = fieldMap[action] || action;
-    return `Cambió ${fieldName} a "${item.new_value || "Ninguno"}"`;
+    let displayValue = item.new_value;
+
+    // Traducir el valor si es un ID
+    if (item.new_value && item.new_value !== "None") {
+      switch (action) {
+        case "category_id":
+          displayValue = categoriesMap[item.new_value] || item.new_value;
+          break;
+        case "priority_id":
+          displayValue = prioritiesMap[item.new_value] || item.new_value;
+          break;
+        case "team_id":
+          displayValue = teamsMap[item.new_value] || item.new_value;
+          break;
+        case "assigned_to":
+          displayValue = agentsMap[item.new_value] || item.new_value;
+          break;
+      }
+    }
+
+    return `Cambió ${fieldName} a "${displayValue || "Ninguno"}"`;
   };
 
   return (
