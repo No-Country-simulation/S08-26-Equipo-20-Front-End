@@ -59,10 +59,17 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
   };
 
   const handleUpdate = async (field: string, value: string | number | null) => {
-    // TC-AGENT-03: No permitir quitar la categoría una vez asignada
-    if (field === "category_id" && value === null && request.category) {
-      setError("Debe seleccionar una categoría válida");
-      return;
+    // TC-AGENT-03 y campos obligatorios: No permitir quitar un valor una vez asignado
+    if (value === null) {
+      if (field === "category_id" && request.category) return setError("Debe seleccionar una categoría válida");
+      if (field === "priority_id" && request.priority) return setError("Debe seleccionar una prioridad válida");
+      if (field === "team_id" && request.team) return setError("Debe seleccionar un equipo válido");
+      if (field === "assigned_to" && request.assignee && request.team?.id === allAgents.find(a => a.id === request.assignee?.id)?.team_id) {
+         // Excepción: Permitimos null en assigned_to SOLO si el equipo cambió y el agente ya no pertenece al nuevo equipo.
+         // Esto ya lo maneja handleTeamChange que fuerza el null, por lo que aquí podemos bloquear si el usuario
+         // intenta elegir la opción vacía manualmente (que ya ocultamos de la UI).
+         // Para evitar bugs complejos, si la UI no muestra la opción nula, no bloquearemos a nivel de JS para no chocar con handleTeamChange.
+      }
     }
 
     try {
@@ -170,7 +177,7 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
             onChange={(e) => handleTeamChange(e.target.value)}
             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
           >
-            <option value="">Sin equipo</option>
+            {!request.team && <option value="">Seleccionar equipo...</option>}
             {teams.map((t) => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
@@ -187,7 +194,9 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
             onChange={(e) => handleUpdate("assigned_to", e.target.value ? parseInt(e.target.value) : null)}
             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors disabled:opacity-50"
           >
-            <option value="">{request.team ? "Seleccionar agente..." : "Primero asigne un equipo"}</option>
+            {!request.assignee && (
+              <option value="">{request.team ? "Seleccionar agente..." : "Primero asigne un equipo"}</option>
+            )}
             {filteredAgents.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}

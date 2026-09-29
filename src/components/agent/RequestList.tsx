@@ -6,7 +6,7 @@ import { requestsService } from "@/services/requests";
 import type { RequestListOut } from "@/types/requests";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/user/StatusBadge";
 import { errorMessage } from "@/utils/error";
 
 export function RequestList() {
@@ -81,7 +81,7 @@ export function RequestList() {
                 </p>
               </td>
               <td className="px-6 py-4">
-                <Badge status={request.status as any} />
+                <StatusBadge status={request.status as any} />
               </td>
               <td className="px-6 py-4">
                 {request.priority?.name || <span className="text-zinc-600">-</span>}
