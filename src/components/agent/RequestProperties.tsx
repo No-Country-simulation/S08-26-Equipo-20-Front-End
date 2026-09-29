@@ -109,23 +109,20 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
       <div className="space-y-4">
         {/* Estado */}
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Estado</label>
-          <div className="flex items-center gap-3">
-            <Badge status={request.status as any} />
-            <select
-              disabled={isUpdating}
-              value=""
-              onChange={(e) => handleUpdate("status", e.target.value)}
-              className="bg-transparent text-sm text-zinc-400 focus:outline-none cursor-pointer"
-            >
-              <option value="" disabled>Cambiar estado...</option>
-              <option value="NEW">Nuevo</option>
-              <option value="IN_PROGRESS">En Progreso</option>
-              <option value="PENDING">Pendiente</option>
-              <option value="RESOLVED">Resuelto</option>
-              <option value="CLOSED">Cerrado</option>
-            </select>
-          </div>
+          <label htmlFor="status" className="block text-xs text-gray-400 mb-1.5">Estado</label>
+          <select
+            id="status"
+            disabled={isUpdating}
+            value={request.status}
+            onChange={(e) => handleUpdate("status", e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
+          >
+            <option value="NEW">Nuevo</option>
+            <option value="IN_PROGRESS">En Progreso</option>
+            <option value="PENDING">Pendiente</option>
+            <option value="RESOLVED">Resuelto</option>
+            <option value="CLOSED">Cerrado</option>
+          </select>
         </div>
 
         {/* Categoría */}
