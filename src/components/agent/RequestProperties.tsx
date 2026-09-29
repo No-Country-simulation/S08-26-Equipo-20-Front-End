@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Request, RequestStatus } from "@/types/requests";
+import type { SystemUser } from "@/types/users";
 import { requestsService } from "@/services/requests";
 import { listCategories } from "@/services/categories";
 import { listPriorities } from "@/services/priorities";
@@ -9,7 +10,6 @@ import { listTeams } from "@/services/teams";
 import { listUsers } from "@/services/users";
 import { errorMessage } from "@/utils/error";
 
-// Iconos (opcional)
 import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
@@ -26,11 +26,18 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
   const [priorities, setPriorities] = useState<{ id: number; name: string }[]>([]);
   const [teams, setTeams] = useState<{ id: number; name: string }[]>([]);
-  const [agents, setAgents] = useState<{ id: number; name: string }[]>([]);
+  const [allAgents, setAllAgents] = useState<SystemUser[]>([]);
 
   useEffect(() => {
     loadOptions();
   }, []);
+
+  // TC-AGENT-07: Filtrar agentes por el equipo actualmente asignado a la solicitud
+  const filteredAgents = useMemo(() => {
+    const teamId = request.team?.id;
+    if (!teamId) return allAgents;
+    return allAgents.filter((a) => a.team_id === teamId);
+  }, [allAgents, request.team?.id]);
 
   const loadOptions = async () => {
     try {
@@ -38,18 +45,26 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
         listCategories(),
         listPriorities(),
         listTeams(),
-        listUsers({ role: "AGENT", is_active: true }), // Solo agentes activos
+        listUsers({ role: "AGENT", is_active: true }),
       ]);
-      setCategories(cats.items);
-      setPriorities(prios.items);
-      setTeams(tms.items);
-      setAgents(ags.items);
+      // Los endpoints de categories/priorities/teams devuelven arrays directos,
+      // mientras que users devuelve { items: [], total: number }
+      setCategories(Array.isArray(cats) ? cats : cats.items);
+      setPriorities(Array.isArray(prios) ? prios : prios.items);
+      setTeams(Array.isArray(tms) ? tms : tms.items);
+      setAllAgents(Array.isArray(ags) ? ags : ags.items);
     } catch (err) {
       console.error("Error loading options", err);
     }
   };
 
   const handleUpdate = async (field: string, value: string | number | null) => {
+    // TC-AGENT-03: No permitir quitar la categoría una vez asignada
+    if (field === "category_id" && value === null && request.category) {
+      setError("Debe seleccionar una categoría válida");
+      return;
+    }
+
     try {
       setIsUpdating(true);
       setError(null);
@@ -63,6 +78,18 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
       setError(errorMessage(err, "Error al actualizar propiedades"));
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  // TC-AGENT-07: Al cambiar de equipo, limpiar el responsable si ya no pertenece al nuevo equipo
+  const handleTeamChange = async (value: string) => {
+    const newTeamId = value ? parseInt(value) : null;
+    const currentAssignee = allAgents.find((a) => a.id === request.assignee?.id);
+
+    await handleUpdate("team_id", newTeamId);
+
+    if (currentAssignee && newTeamId && currentAssignee.team_id !== newTeamId) {
+      await handleUpdate("assigned_to", null);
     }
   };
 
@@ -111,7 +138,8 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
             onChange={(e) => handleUpdate("category_id", e.target.value ? parseInt(e.target.value) : null)}
             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
           >
-            <option value="">Sin categoría</option>
+            {/* TC-AGENT-03: Solo mostrar "Seleccionar categoría" si aún no tiene una asignada */}
+            {!request.category && <option value="">Seleccionar categoría...</option>}
             {categories.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
@@ -128,7 +156,7 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
             onChange={(e) => handleUpdate("priority_id", e.target.value ? parseInt(e.target.value) : null)}
             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
           >
-            <option value="">Sin prioridad</option>
+            {!request.priority && <option value="">Seleccionar prioridad...</option>}
             {priorities.map((p) => (
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
@@ -142,7 +170,7 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
             id="team_id"
             value={request.team?.id || ""}
             disabled={isUpdating}
-            onChange={(e) => handleUpdate("team_id", e.target.value ? parseInt(e.target.value) : null)}
+            onChange={(e) => handleTeamChange(e.target.value)}
             className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
           >
             <option value="">Sin equipo</option>
@@ -158,12 +186,12 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
           <select
             id="assigned_to"
             value={request.assignee?.id || ""}
-            disabled={isUpdating}
+            disabled={isUpdating || !request.team}
             onChange={(e) => handleUpdate("assigned_to", e.target.value ? parseInt(e.target.value) : null)}
-            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
+            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors disabled:opacity-50"
           >
-            <option value="">Sin asignar</option>
-            {agents.map((a) => (
+            <option value="">{request.team ? "Seleccionar agente..." : "Primero asigne un equipo"}</option>
+            {filteredAgents.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}
           </select>
@@ -172,3 +200,4 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
     </div>
   );
 }
+
