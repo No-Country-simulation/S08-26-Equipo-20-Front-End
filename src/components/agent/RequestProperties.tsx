@@ -152,19 +152,10 @@ export function RequestProperties({ request, onUpdate }: RequestPropertiesProps)
 
         {/* Prioridad */}
         <div>
-          <label htmlFor="priority_id" className="block text-xs text-gray-400 mb-1.5">Prioridad</label>
-          <select
-            id="priority_id"
-            value={request.priority?.id || ""}
-            disabled={isUpdating}
-            onChange={(e) => handleUpdate("priority_id", e.target.value ? parseInt(e.target.value) : null)}
-            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-zinc-600 focus:border-zinc-600 transition-colors"
-          >
-            {!request.priority && <option value="">Seleccionar prioridad...</option>}
-            {priorities.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+          <label className="block text-xs text-gray-400 mb-1.5">Prioridad</label>
+          <div className="w-full bg-zinc-950/50 border border-zinc-800 text-zinc-300 rounded-md px-3 py-2 text-sm">
+            {request.priority?.name || "Sin prioridad asignada"}
+          </div>
         </div>
 
         {/* Equipo */}
