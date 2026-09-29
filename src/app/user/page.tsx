@@ -103,7 +103,8 @@ export default function UserPortalPage() {
 
     // 2. Filtro por estado
     if (statusFilter === "ALL") return true;
-    if (statusFilter === "ACTIVE") return ["NEW", "IN_PROGRESS"].includes(r.status);
+    if (statusFilter === "NEW") return r.status === "NEW";
+    if (statusFilter === "IN_PROGRESS") return r.status === "IN_PROGRESS";
     if (statusFilter === "PENDING") return r.status === "PENDING";
     if (statusFilter === "RESOLVED") return ["RESOLVED", "CLOSED"].includes(r.status);
     return true;
@@ -229,7 +230,8 @@ export default function UserPortalPage() {
               className="appearance-none bg-[#0a0a0c] border border-zinc-800 text-zinc-300 text-sm rounded-lg pl-4 pr-10 py-2 focus:outline-none focus:border-zinc-600 transition-colors cursor-pointer"
             >
               <option value="ALL">Todos los estados</option>
-              <option value="ACTIVE">Activas</option>
+              <option value="NEW">Nuevas</option>
+              <option value="IN_PROGRESS">En proceso</option>
               <option value="PENDING">En aprobación</option>
               <option value="RESOLVED">Resueltas</option>
             </select>
