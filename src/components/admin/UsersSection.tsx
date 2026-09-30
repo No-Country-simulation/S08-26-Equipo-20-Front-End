@@ -350,7 +350,7 @@ export function UsersSection() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Buscar por nombre o email"
+            placeholder="Buscar por usuario o email"
             className={INPUT_CLASS}
           />
           <button
