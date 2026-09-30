@@ -40,7 +40,11 @@ export function RequestHistory({ requestId, lastUpdated }: RequestHistoryProps) 
         import("@/services/users").then(m => m.listUsers({ role: "AGENT", limit: 1000 })),
       ]);
 
-      setHistory(histData);
+      // Aseguramos de que el historial se muestre de más reciente a más antiguo
+      const sortedHistory = [...histData].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      setHistory(sortedHistory);
 
       // Crear diccionarios
       const safeArray = (data: any) => Array.isArray(data) ? data : data?.items || [];
