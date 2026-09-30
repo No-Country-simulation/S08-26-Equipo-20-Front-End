@@ -101,7 +101,7 @@ export function RequestDetail({ id }: RequestDetailProps) {
           </div>
 
           <RequestComments requestId={request.id} />
-          <RequestHistory requestId={request.id} />
+          <RequestHistory requestId={request.id} lastUpdated={request.updated_at} />
         </div>
 
         {/* Right Column (Sidebar) */}
