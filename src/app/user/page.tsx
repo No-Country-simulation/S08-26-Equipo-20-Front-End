@@ -16,6 +16,7 @@ import { CustomerRequestRead } from "@/types/request";
 import { RequestService } from "@/services/request.service";
 import { NewRequestModal } from "@/components/user/NewRequestModal";
 import { RequestList } from "@/components/user/RequestList";
+import { Brand } from "@/components/ui/Brand";
 
 interface Stats {
   active: number;
@@ -126,15 +127,14 @@ export default function UserPortalPage() {
     >
       {/* 1. Header principal */}
       <header className="border-b border-zinc-900 bg-[#080809] px-8 pt-6 pb-0">
-        <div className="max-w-7xl mx-auto flex items-center justify-between pb-6">
-          <div>
-            <h1 className="text-sm font-bold tracking-widest text-white uppercase">
-              SERVICEFLOW
+<div className="max-w-7xl mx-auto grid grid-cols-3 items-center pb-6">
+          <div className="col-start-2 flex justify-center">
+            <h1>
+              <Brand tagline="Portal de Solicitudes" />
             </h1>
-            <p className="text-xs text-zinc-500 mt-0.5">Portal de Solicitudes</p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="col-start-3 flex items-center justify-end gap-4">
             <span className="text-sm text-zinc-300 font-medium">
               {!isMounted || sessionLoading ? "Cargando..." : displayName}
             </span>
