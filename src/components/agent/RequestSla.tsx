@@ -15,10 +15,6 @@ export function RequestSla({ requestId }: RequestSlaProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [responseDeadline, setResponseDeadline] = useState("");
-  const [resolutionDeadline, setResolutionDeadline] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
-
   useEffect(() => {
     loadSla();
   }, [requestId]);
@@ -29,34 +25,12 @@ export function RequestSla({ requestId }: RequestSlaProps) {
       setError(null);
       const data = await requestsService.getSla(requestId);
       setSla(data);
-      if (data.response_deadline) {
-        setResponseDeadline(new Date(data.response_deadline).toISOString().slice(0, 16));
-      }
-      if (data.resolution_deadline) {
-        setResolutionDeadline(new Date(data.resolution_deadline).toISOString().slice(0, 16));
-      }
     } catch (err: any) {
       if (err.status !== 404) {
         setError(errorMessage(err, "Error al cargar SLA"));
       }
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleUpdate = async () => {
-    try {
-      setIsUpdating(true);
-      setError(null);
-      const data = await requestsService.upsertSla(requestId, {
-        response_deadline: responseDeadline ? new Date(responseDeadline).toISOString() : null,
-        resolution_deadline: resolutionDeadline ? new Date(resolutionDeadline).toISOString() : null,
-      });
-      setSla(data);
-    } catch (err) {
-      setError(errorMessage(err, "Error al actualizar SLA"));
-    } finally {
-      setIsUpdating(false);
     }
   };
 
@@ -91,7 +65,6 @@ export function RequestSla({ requestId }: RequestSlaProps) {
           <Clock className="h-5 w-5 text-zinc-400" />
           <h2 className="text-sm font-semibold text-white">SLA (Tiempos)</h2>
         </div>
-        {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />}
       </div>
 
       {error && (
@@ -108,13 +81,10 @@ export function RequestSla({ requestId }: RequestSlaProps) {
             {sla && getStatusDisplay(sla.response_on_time, sla.responded_at)}
           </div>
           <div>
-            <label className="block text-[10px] text-zinc-500 mb-1">Vencimiento</label>
-            <input
-              type="datetime-local"
-              value={responseDeadline}
-              onChange={(e) => setResponseDeadline(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 text-white rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-600"
-            />
+            <span className="block text-[10px] text-zinc-500">Vencimiento:</span>
+            <span className="text-xs text-white">
+              {sla?.response_deadline ? new Date(sla.response_deadline).toLocaleString() : "Sin definir"}
+            </span>
           </div>
           {sla?.responded_at && (
             <div>
@@ -131,13 +101,10 @@ export function RequestSla({ requestId }: RequestSlaProps) {
             {sla && getStatusDisplay(sla.resolution_on_time, sla.resolved_at)}
           </div>
           <div>
-            <label className="block text-[10px] text-zinc-500 mb-1">Vencimiento</label>
-            <input
-              type="datetime-local"
-              value={resolutionDeadline}
-              onChange={(e) => setResolutionDeadline(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-800 text-white rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-600"
-            />
+            <span className="block text-[10px] text-zinc-500">Vencimiento:</span>
+            <span className="text-xs text-white">
+              {sla?.resolution_deadline ? new Date(sla.resolution_deadline).toLocaleString() : "Sin definir"}
+            </span>
           </div>
           {sla?.resolved_at && (
             <div>
@@ -146,14 +113,6 @@ export function RequestSla({ requestId }: RequestSlaProps) {
             </div>
           )}
         </div>
-
-        <button
-          onClick={handleUpdate}
-          disabled={isUpdating}
-          className="w-full bg-white text-black font-medium text-xs py-2 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-60"
-        >
-          Actualizar SLA
-        </button>
       </div>
     </div>
   );
