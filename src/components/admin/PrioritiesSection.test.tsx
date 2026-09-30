@@ -148,6 +148,33 @@ describe("PrioritiesSection", () => {
     );
   });
 
+  it("muestra dentro del modal el error del back-end al no poder guardar", async () => {
+    const user = userEvent.setup();
+    vi.mocked(updatePriority).mockRejectedValue(
+      new ApiError("Ya existe una prioridad con ese nivel", 409),
+    );
+    renderPrioritiesSection();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Editar prioridad Alta" }),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Editar Prioridad",
+    });
+    await user.clear(within(dialog).getByLabelText("Nivel"));
+    await user.type(within(dialog).getByLabelText("Nivel"), "7");
+    await user.click(
+      within(dialog).getByRole("button", { name: "Guardar Cambios" }),
+    );
+
+    expect(
+      await within(dialog).findByText("Ya existe una prioridad con ese nivel"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Editar Prioridad" }),
+    ).toBeInTheDocument();
+  });
+
   it("elimina una prioridad tras confirmar", async () => {
     const user = userEvent.setup();
     renderPrioritiesSection();
