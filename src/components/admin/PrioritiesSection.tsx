@@ -24,11 +24,18 @@ const LABEL_CLASS = "mb-1.5 block text-xs text-gray-400";
 interface PriorityFormProps {
   initial?: Priority;
   isPending: boolean;
+  serverError: string | null;
   onSubmit: (payload: PriorityFormPayload) => Promise<void>;
   onClose: () => void;
 }
 
-function PriorityForm({ initial, isPending, onSubmit, onClose }: PriorityFormProps) {
+function PriorityForm({
+  initial,
+  isPending,
+  serverError,
+  onSubmit,
+  onClose,
+}: PriorityFormProps) {
   const [name, setName] = useState(initial?.name ?? "");
   const [level, setLevel] = useState(initial ? String(initial.level) : "");
   const [error, setError] = useState<string | null>(null);
@@ -67,9 +74,9 @@ function PriorityForm({ initial, isPending, onSubmit, onClose }: PriorityFormPro
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {error && (
+        {(error ?? serverError) && (
           <p role="alert" className="text-xs text-red-500">
-            {error}
+            {error ?? serverError}
           </p>
         )}
         <div>
@@ -121,6 +128,7 @@ export function PrioritiesSection() {
   const [editing, setEditing] = useState<Priority | null>(null);
   const [deleting, setDeleting] = useState<Priority | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,12 +168,13 @@ export function PrioritiesSection() {
 
   async function handleCreate(payload: PriorityFormPayload) {
     setIsPending(true);
+    setFormError(null);
     try {
       await createPriority(payload);
       setCreateOpen(false);
       await reload();
     } catch (cause) {
-      setError(errorMessage(cause, "No se pudo crear la prioridad"));
+      setFormError(errorMessage(cause, "No se pudo crear la prioridad"));
     } finally {
       setIsPending(false);
     }
@@ -176,12 +185,13 @@ export function PrioritiesSection() {
       return;
     }
     setIsPending(true);
+    setFormError(null);
     try {
       await updatePriority(editing.id, payload);
       setEditing(null);
       await reload();
     } catch (cause) {
-      setError(errorMessage(cause, "No se pudo actualizar la prioridad"));
+      setFormError(errorMessage(cause, "No se pudo actualizar la prioridad"));
     } finally {
       setIsPending(false);
     }
@@ -208,7 +218,10 @@ export function PrioritiesSection() {
       <SectionHeader
         title="Prioridades"
         actionLabel="Crear Prioridad"
-        onAction={() => setCreateOpen(true)}
+        onAction={() => {
+          setFormError(null);
+          setCreateOpen(true);
+        }}
       />
       {error && (
         <p role="alert" className="mb-6 text-xs text-red-500">
@@ -252,7 +265,10 @@ export function PrioritiesSection() {
                   <td className="flex justify-end gap-1 px-4 py-3">
                     <button
                       type="button"
-                      onClick={() => setEditing(priority)}
+                      onClick={() => {
+                        setFormError(null);
+                        setEditing(priority);
+                      }}
                       aria-label={`Editar prioridad ${priority.name}`}
                       className="text-zinc-500 transition-colors hover:text-zinc-300"
                     >
@@ -276,16 +292,24 @@ export function PrioritiesSection() {
       {createOpen && (
         <PriorityForm
           isPending={isPending}
+          serverError={formError}
           onSubmit={handleCreate}
-          onClose={() => setCreateOpen(false)}
+          onClose={() => {
+            setFormError(null);
+            setCreateOpen(false);
+          }}
         />
       )}
       {editing && (
         <PriorityForm
           initial={editing}
           isPending={isPending}
+          serverError={formError}
           onSubmit={handleUpdate}
-          onClose={() => setEditing(null)}
+          onClose={() => {
+            setFormError(null);
+            setEditing(null);
+          }}
         />
       )}
       {deleting && (
