@@ -8,9 +8,10 @@ import { errorMessage } from "@/utils/error";
 
 interface RequestHistoryProps {
   requestId: number;
+  lastUpdated?: string;
 }
 
-export function RequestHistory({ requestId }: RequestHistoryProps) {
+export function RequestHistory({ requestId, lastUpdated }: RequestHistoryProps) {
   const [history, setHistory] = useState<History[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export function RequestHistory({ requestId }: RequestHistoryProps) {
 
   useEffect(() => {
     loadData();
-  }, [requestId]);
+  }, [requestId, lastUpdated]);
 
   const loadData = async () => {
     try {
