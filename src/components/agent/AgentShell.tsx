@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useSession } from "@/hooks/useSession";
+import { Brand } from "@/components/ui/Brand";
 
 const SECTIONS = [
   { href: "/agent/requests", label: "Solicitudes" },
@@ -17,14 +18,11 @@ export function AgentShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
-          <div className="flex flex-col">
-            <p className="text-lg font-bold uppercase tracking-widest text-white">
-              ServiceFlow
-            </p>
-            <p className="text-xs text-gray-400">Área de Agente</p>
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-3 items-center px-6 py-3">
+          <div className="col-start-2 flex justify-center">
+            <Brand tagline="Área de Agente" />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="col-start-3 flex items-center justify-end gap-4">
             <span className="text-sm text-zinc-200">{user?.name}</span>
             <button
               type="button"

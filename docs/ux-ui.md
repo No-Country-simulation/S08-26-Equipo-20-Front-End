@@ -6,14 +6,25 @@ Guía visual y de experiencia de usuario para mantener una interfaz consistente,
 
 ServiceFlow es una plataforma corporativa para la gestión de solicitudes internas.
 
-* Logo: `serviceflow_logo.svg`.
-* Wordmark: `SERVICEFLOW`.
+* Logo: componente `Brand` (`src/components/ui/Brand.tsx`), que renderiza el SVG
+  de `public/serviceflow_logo/code.html` de forma inline. No hay archivo
+  `serviceflow_logo.svg`.
+* Wordmark: no existe. El texto visible "ServiceFlow" está eliminado; el nombre
+  accesible de la marca lo aporta el `<title>` del SVG, que no se ve.
 * Tagline de acceso: `Acceso Corporativo`.
 * Idioma: español rioplatense.
 * Tratamiento: usted.
-* Mayúsculas: únicamente para la marca y encabezados conceptuales.
+* Mayúsculas: únicamente para los encabezados conceptuales.
 
-El logo debe utilizarse en la cabecera de las pantallas de acceso y en la barra superior de la aplicación.
+El logo debe utilizarse en la cabecera de las pantallas de acceso y en la barra
+superior de la aplicación. Como no hay wordmark, el ícono queda siempre centrado
+y el tagline debajo; en las tres barras superiores el header usa un grid de tres
+columnas iguales para que la marca quede centrada respecto de la pantalla.
+
+| Contexto              | Tamaño     | Clase        |
+| --------------------- | ---------- | ------------ |
+| Ingreso, cambio clave | 56px       | `size="lg"`  |
+| Barras de la app      | 40px       | `size="sm"`  |
 
 ## Principios de Diseño
 
@@ -43,6 +54,8 @@ La interfaz utiliza principalmente la escala neutra `zinc` de Tailwind CSS.
 | Error             | `text-red-500`                      |
 | Éxito             | `text-emerald-500`                  |
 | Información       | `text-blue-500`                     |
+| Relleno del logo  | `fill-zinc-800`                     |
+| Trazo del logo    | `stroke-zinc-700` (borde)           |
 | Advertencia       | `text-amber-500`                    |
 
 ## Tipografía
