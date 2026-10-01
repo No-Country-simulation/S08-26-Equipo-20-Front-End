@@ -37,7 +37,7 @@ export function RequestHistory({ requestId, lastUpdated }: RequestHistoryProps) 
         import("@/services/categories").then(m => m.listCategories()),
         import("@/services/priorities").then(m => m.listPriorities()),
         import("@/services/teams").then(m => m.listTeams()),
-        import("@/services/users").then(m => m.listUsers({ role: "AGENT", limit: 1000 })),
+        import("@/services/users").then(m => m.listUsers({ role: "AGENT", limit: 100 })),
       ]);
 
       // Aseguramos de que el historial se muestre de más reciente a más antiguo
