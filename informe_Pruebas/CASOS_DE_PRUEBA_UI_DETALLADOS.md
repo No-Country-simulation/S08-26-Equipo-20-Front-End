@@ -116,7 +116,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -168,7 +167,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -220,7 +218,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -271,7 +268,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -327,7 +323,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -378,7 +373,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -428,7 +422,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -478,7 +471,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -530,7 +522,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -577,7 +568,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -624,7 +614,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -673,7 +662,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -725,7 +713,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -774,7 +761,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -823,7 +809,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -879,7 +864,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -928,7 +912,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -981,7 +964,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1029,7 +1011,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1078,7 +1059,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1126,7 +1106,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1176,7 +1155,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1226,7 +1204,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1276,7 +1253,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1323,7 +1299,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1374,7 +1349,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1421,7 +1395,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1468,7 +1441,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1519,7 +1491,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1568,7 +1539,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1616,7 +1586,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1663,7 +1632,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1722,7 +1690,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1771,7 +1738,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1819,7 +1785,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1869,7 +1834,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1919,7 +1883,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -1970,7 +1933,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2021,7 +1983,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2070,7 +2031,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2118,7 +2078,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2168,7 +2127,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2216,7 +2174,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2272,7 +2229,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2320,7 +2276,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
@@ -2367,7 +2322,6 @@
 - **Estado:** [X] Aprobado (Passed)  [ ] Fallido (Failed)  [ ] Bloqueado (Blocked)
 - **Fecha de Ejecución:** 2026-10-01
 - **Ejecutado por:** Andres Adrian Estrada
-- **Enlace a Evidencias / Capturas:** `[adjuntar capturas / grabaciones de UI]`
 - **Defecto Asociado:** N/A
 
 ---
